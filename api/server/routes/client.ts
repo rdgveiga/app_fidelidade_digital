@@ -1,6 +1,6 @@
 import express from 'express';
-import db from '../db';
-import { authenticate, requireRole, AuthRequest } from '../middleware/auth';
+import db from '../db.js';
+import { authenticate, requireRole, AuthRequest } from '../middleware/auth.js';
 import { addSeconds, addMinutes, format } from 'date-fns';
 
 const router = express.Router();
