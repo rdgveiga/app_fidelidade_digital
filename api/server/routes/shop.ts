@@ -13,7 +13,6 @@ const upload = multer({
 const router = express.Router();
 
 // Get Shop Dashboard Stats
-// Get Shop Dashboard Stats
 router.get('/dashboard', authenticate, requireRole(['SHOPKEEPER']), async (req: AuthRequest, res) => {
   const tenantId = req.user!.id;
 
@@ -21,20 +20,66 @@ router.get('/dashboard', authenticate, requireRole(['SHOPKEEPER']), async (req: 
     const { data: store } = await db.from('stores').select('*').eq('tenant_id', tenantId).single();
     const { data: campaign } = await db.from('campaigns').select('*, expires_at').eq('tenant_id', tenantId).single();
 
-    const { count: activeCards } = await db.from('loyalty_cards').select('*', { count: 'exact', head: true }).eq('tenant_id', tenantId);
+    const { count: activeCards } = await db.from('loyalty_cards').select('*', { count: 'exact', head: true }).eq('tenant_id', tenantId).eq('status', 'ACTIVE');
     const { count: totalStamps } = await db.from('stamp_transactions').select('*', { count: 'exact', head: true }).eq('tenant_id', tenantId).eq('type', 'STAMP');
     const { count: totalRedeems } = await db.from('stamp_transactions').select('*', { count: 'exact', head: true }).eq('tenant_id', tenantId).eq('type', 'REDEEM');
+
+    // Count cards Ready to Redeem
+    let readyToRedeemCount = 0;
+    if (campaign) {
+      const { count } = await db.from('loyalty_cards')
+        .select('*', { count: 'exact', head: true })
+        .eq('tenant_id', tenantId)
+        .eq('status', 'ACTIVE')
+        .gte('current_stamps', campaign.stamps_required);
+      readyToRedeemCount = count || 0;
+    }
+
+    // Get Monthly Evolution (last 5 months)
+    const evolution: any[] = [];
+    const now = new Date();
+
+    for (let i = 4; i >= 0; i--) {
+      const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
+      const nextM = new Date(now.getFullYear(), now.getMonth() - i + 1, 1);
+
+      const monthLabel = d.toLocaleString('pt-BR', { month: 'short', year: '2-digit' }).replace('.', '');
+
+      const { count: mStamps } = await db.from('stamp_transactions')
+        .select('*', { count: 'exact', head: true })
+        .eq('tenant_id', tenantId)
+        .eq('type', 'STAMP')
+        .gte('created_at', d.toISOString())
+        .lt('created_at', nextM.toISOString());
+
+      const { count: mRedeems } = await db.from('stamp_transactions')
+        .select('*', { count: 'exact', head: true })
+        .eq('tenant_id', tenantId)
+        .eq('type', 'REDEEM')
+        .gte('created_at', d.toISOString())
+        .lt('created_at', nextM.toISOString());
+
+      evolution.push({
+        name: monthLabel,
+        activated: mStamps || 0,
+        redeemed: mRedeems || 0
+      });
+    }
 
     res.json({
       store,
       campaign,
       stats: {
+        totalCustomers: activeCards || 0, // Using activeCards as total customers for this shop
         activeCards: activeCards || 0,
         totalStamps: totalStamps || 0,
-        totalRedeems: totalRedeems || 0
+        totalRedeems: totalRedeems || 0,
+        readyToRedeem: readyToRedeemCount,
+        monthlyEvolution: evolution
       }
     });
   } catch (error) {
+    console.error('Error fetching dashboard:', error);
     res.status(500).json({ error: 'Erro ao carregar dashboard' });
   }
 });

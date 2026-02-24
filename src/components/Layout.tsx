@@ -184,7 +184,7 @@ export const Layout = ({ children }: { children: React.ReactNode }) => {
         </footer>
 
         {isTrialExpired && (
-          <TrialExpirationModal onSelectPlan={() => window.open('https://api.whatsapp.com/send?phone=5521985899548&text=Olá,%20gostaria%20de%20assinar%20o%20plano%20da%20Fidelidade%20Digital!', '_blank')} />
+          <TrialExpirationModal onSelectPlan={() => navigate(`/shop/${user.store?.slug || 'dashboard'}/subscription`)} />
         )}
       </div>
     );
@@ -240,9 +240,41 @@ export const Layout = ({ children }: { children: React.ReactNode }) => {
                 <p className="text-xs text-gray-500 truncate uppercase">{user.role}</p>
               </div>
             </div>
+            {user.role === 'SHOPKEEPER' && user.store && (
+              <div className="mt-8 pt-4 border-t px-2">
+                <div className="bg-gradient-to-br from-indigo-50 to-blue-50 rounded-2xl p-4 border border-indigo-100 shadow-sm overflow-hidden relative group">
+                  <div className="absolute -top-4 -right-4 w-16 h-16 bg-indigo-500/10 rounded-full group-hover:scale-150 transition-transform duration-700" />
+                  <div className="relative z-10">
+                    <div className="flex items-center gap-2 mb-2">
+                      <div className="p-1.5 bg-indigo-600 rounded-lg text-white">
+                        <Gift size={12} />
+                      </div>
+                      <span className="text-[10px] font-black text-indigo-600 uppercase tracking-widest">Seu Plano</span>
+                    </div>
+                    {user.trialEndsAt && new Date(user.trialEndsAt) > new Date() ? (
+                      <div>
+                        <p className="text-xs font-bold text-gray-900 mb-1">Período de Teste</p>
+                        <p className="text-[10px] text-gray-500 mb-3">Expira em {new Date(user.trialEndsAt).toLocaleDateString()}</p>
+                      </div>
+                    ) : (
+                      <div>
+                        <p className="text-xs font-bold text-gray-900 mb-1">Plano Ativo</p>
+                        <p className="text-[10px] text-gray-500 mb-3">Gerencie sua assinatura</p>
+                      </div>
+                    )}
+                    <Link
+                      to={`/shop/${user.store.slug}/subscription`}
+                      className="block w-full text-center py-2 bg-indigo-600 hover:bg-indigo-700 text-white text-[10px] font-black rounded-xl transition-all shadow-md shadow-indigo-100"
+                    >
+                      FAZER UPGRADE
+                    </Link>
+                  </div>
+                </div>
+              </div>
+            )}
             <button
               onClick={logout}
-              className="w-full flex items-center gap-2 px-4 py-2 text-sm text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+              className="w-full flex items-center gap-2 px-4 py-2 text-sm text-red-600 hover:bg-red-50 rounded-lg transition-colors mt-2"
             >
               <LogOut size={18} />
               Sair

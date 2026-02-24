@@ -1,5 +1,6 @@
 import express from 'express';
 import db from '../db.js';
+import bcrypt from 'bcryptjs';
 import { authenticate, requireRole, AuthRequest } from '../middleware/auth.js';
 
 const router = express.Router();
@@ -169,27 +170,26 @@ router.post('/user/:id/reset-password', authenticate, requireRole(['ADMIN']), as
   const { password } = req.body;
 
   if (!password || password.length < 6) {
-    return res.status(400).json({ error: 'Senha deve ter no mínimo 6 caracteres' });
+    res.status(400).json({ error: 'Senha deve ter no mínimo 6 caracteres' });
+    return;
   }
 
   try {
-    const { bcrypt } = await import('bcryptjs' as any); // Dynamic import for simplicity in route
-    const salt = await (await import('bcryptjs' as any)).genSalt(10);
-    const hash = await (await import('bcryptjs' as any)).hash(password, salt);
-
-    const { error } = await db.from('users').update({
-      password_hash: hash,
-      must_change_password: true
-    }).eq('id', id);
+    const hash = await bcrypt.hash(password, 10);
+    const { error } = await db
+      .from('users')
+      .update({
+        password_hash: hash,
+        must_change_password: true
+      })
+      .eq('id', parseInt(id));
 
     if (error) throw error;
+
     res.json({ message: 'Senha resetada com sucesso' });
   } catch (error: any) {
-    // Falls back to direct require if dynamic import fails or just use global if available
-    const bcryptLocal = require('bcryptjs');
-    const hash = bcryptLocal.hashSync(password, 10);
-    await db.from('users').update({ password_hash: hash, must_change_password: true }).eq('id', id);
-    res.json({ message: 'Senha resetada com sucesso' });
+    console.error('Erro ao resetar senha:', error);
+    res.status(500).json({ error: 'Erro ao resetar senha' });
   }
 });
 

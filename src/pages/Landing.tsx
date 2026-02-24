@@ -25,7 +25,9 @@ import {
   Heart,
   ShoppingBag,
   Star,
-  Scale
+  Scale,
+  Coffee,
+  Scissors
 } from 'lucide-react';
 import { motion } from 'framer-motion';
 
@@ -275,33 +277,44 @@ export const Landing = () => {
         </section>
 
         {/* Nichos Section */}
-        <section className="py-20 bg-white px-6 border-y border-gray-50">
+        <section className="py-24 bg-white px-6">
           <div className="max-w-7xl mx-auto">
-            <div className="text-center mb-16">
-              <h2 className="text-3xl font-black text-gray-900 mb-4">Perfeito para qualquer tipo de negócio</h2>
-              <p className="text-lg text-gray-600">Se você tem clientes recorrentes, o Fidelidade Digital é para você.</p>
+            <div className="text-center mb-16 space-y-4">
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-indigo-50 text-indigo-600 text-xs font-black uppercase tracking-widest">
+                <Rocket className="w-3 h-3" />
+                Nichos de Atuação
+              </div>
+              <h2 className="text-4xl md:text-5xl font-black text-gray-900">Perfeito para o seu negócio</h2>
+              <p className="text-xl text-gray-600 max-w-2xl mx-auto">Se você tem clientes recorrentes, o Fidelidade Digital é a ferramenta ideal para aumentar seu faturamento.</p>
             </div>
 
-            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
               {[
-                { icon: Rocket, label: "Lanchonetes e Cafés", color: "from-orange-500" },
-                { icon: Briefcase, label: "Salões e Barbearias", color: "from-blue-500" },
-                { icon: Heart, label: "Pet Shops e Clínicas", color: "from-red-500" },
-                { icon: ShoppingBag, label: "Lojas e Varejo", color: "from-purple-500" },
-                { icon: Scale, label: "Profissionais Autônomos", color: "from-teal-500" },
+                { icon: Coffee, label: "Lanchonetes e Cafés", color: "orange", bg: "bg-orange-50", text: "text-orange-600", border: "border-orange-100", highlight: "bg-orange-600" },
+                { icon: Scissors, label: "Salões e Barbearias", color: "blue", bg: "bg-blue-50", text: "text-blue-600", border: "border-blue-100", highlight: "bg-blue-600" },
+                { icon: Heart, label: "Pet Shops e Clínicas", color: "red", bg: "bg-red-50", text: "text-red-600", border: "border-red-100", highlight: "bg-red-600" },
+                { icon: ShoppingBag, label: "Lojas e Varejo", color: "purple", bg: "bg-purple-50", text: "text-purple-600", border: "border-purple-100", highlight: "bg-purple-600" },
+                { icon: Scale, label: "Profissionais Autônomos", color: "teal", bg: "bg-teal-50", text: "text-teal-600", border: "border-teal-100", highlight: "bg-teal-600" },
+                { icon: Rocket, label: "E muito mais...", color: "indigo", bg: "bg-indigo-50", text: "text-indigo-600", border: "border-indigo-100", highlight: "bg-indigo-600" },
               ].map((nicho, i) => (
                 <motion.div
                   key={i}
-                  whileHover={{ x: 8, transition: { duration: 0.2 } }}
-                  className="group relative bg-white p-6 rounded-[1.5rem] border border-gray-100 shadow-sm hover:shadow-xl hover:shadow-blue-900/5 transition-all duration-300 flex items-center gap-6 overflow-hidden"
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: i * 0.05 }}
+                  whileHover={{ y: -5, transition: { duration: 0.2 } }}
+                  className={`group relative ${nicho.bg} p-8 rounded-[2rem] border-2 ${nicho.border} shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col items-start gap-6 overflow-hidden`}
                 >
-                  <div className={`absolute inset-0 bg-gradient-to-r ${nicho.color} to-white opacity-0 group-hover:opacity-[0.03] transition-opacity duration-300`} />
-                  <div className={`p-3 rounded-xl bg-gray-50 group-hover:scale-110 group-hover:bg-white transition-all duration-300 shrink-0`}>
-                    <nicho.icon size={28} className="text-gray-900 group-hover:text-blue-600 transition-colors" />
+                  <div className={`p-4 rounded-2xl bg-white shadow-sm group-hover:scale-110 group-hover:${nicho.highlight} group-hover:text-white transition-all duration-300`}>
+                    <nicho.icon size={32} className={`${nicho.text} transition-colors`} />
                   </div>
-                  <span className="font-extrabold text-gray-900 text-lg leading-tight">
-                    {nicho.label}
-                  </span>
+                  <div className="space-y-2">
+                    <h3 className="font-black text-gray-900 text-xl leading-tight">
+                      {nicho.label}
+                    </h3>
+                    <div className={`w-12 h-1 ${nicho.highlight} rounded-full opacity-30 group-hover:w-20 group-hover:opacity-100 transition-all duration-500`} />
+                  </div>
                 </motion.div>
               ))}
             </div>
@@ -453,21 +466,80 @@ export const Landing = () => {
               initial={{ opacity: 0, scale: 0.9 }}
               whileInView={{ opacity: 1, scale: 1 }}
               viewport={{ once: true }}
-              className="bg-gray-50 rounded-[3rem] p-8 lg:p-12"
+              className="relative"
             >
-              <div className="bg-white rounded-3xl shadow-2xl p-6 border border-gray-100">
-                <div className="w-full h-64 bg-gray-50 rounded-2xl mb-6 flex items-center justify-center">
-                  <div className="w-full max-w-[200px] space-y-4">
-                    <div className="h-4 bg-gray-200 rounded-full w-3/4 mx-auto" />
-                    <div className="h-24 bg-gray-200 rounded-2xl w-full" />
-                    <div className="flex justify-center gap-2">
-                      {[1, 2, 3].map(i => <div key={i} className="w-8 h-8 bg-blue-600 rounded-full" />)}
-                      {[4, 5].map(i => <div key={i} className="w-8 h-8 bg-gray-100 rounded-full" />)}
+              <div className="bg-gradient-to-br from-blue-600 to-indigo-700 rounded-[3rem] p-8 lg:p-12 shadow-2xl relative overflow-hidden group">
+                {/* Decorative elements */}
+                <div className="absolute -top-24 -right-24 w-64 h-64 bg-white/10 rounded-full blur-3xl group-hover:scale-110 transition-transform duration-700" />
+                <div className="absolute -bottom-24 -left-24 w-64 h-64 bg-blue-400/20 rounded-full blur-3xl" />
+
+                <div className="relative bg-white rounded-3xl shadow-2xl p-8 border border-white/20 backdrop-blur-sm">
+                  <div className="flex justify-between items-center mb-8">
+                    <div className="flex items-center gap-3">
+                      <div className="w-10 h-10 bg-blue-600 rounded-xl flex items-center justify-center text-white">
+                        <Store size={20} />
+                      </div>
+                      <div>
+                        <div className="h-4 bg-gray-100 rounded-full w-24 mb-1" />
+                        <div className="h-3 bg-gray-50 rounded-full w-16" />
+                      </div>
                     </div>
-                    <div className="h-10 bg-gray-900 rounded-xl w-full" />
+                    <div className="w-8 h-8 rounded-full bg-gray-50" />
+                  </div>
+
+                  <div className="space-y-6">
+                    <div className="bg-gray-50 rounded-2xl p-6 border border-gray-100">
+                      <div className="flex justify-between items-end mb-4">
+                        <span className="text-xs font-black text-gray-400 uppercase tracking-widest">Seu Progresso</span>
+                        <span className="text-blue-600 font-black text-lg">8/10</span>
+                      </div>
+                      <div className="grid grid-cols-5 gap-3">
+                        {[1, 2, 3, 4, 5, 6, 7, 8].map(i => (
+                          <div key={i} className="aspect-square bg-blue-600 rounded-full flex items-center justify-center shadow-lg shadow-blue-200">
+                            <Check size={12} className="text-white" strokeWidth={4} />
+                          </div>
+                        ))}
+                        {[9, 10].map(i => (
+                          <div key={i} className="aspect-square bg-white border-2 border-dashed border-gray-200 rounded-full" />
+                        ))}
+                      </div>
+                    </div>
+
+                    <div className="p-4 bg-indigo-50 rounded-2xl border border-indigo-100 flex items-center gap-4">
+                      <div className="w-10 h-10 bg-white rounded-xl flex items-center justify-center text-indigo-600">
+                        <Gift size={20} />
+                      </div>
+                      <div>
+                        <div className="h-3 bg-indigo-200/50 rounded-full w-32 mb-1" />
+                        <div className="h-2 bg-indigo-200/30 rounded-full w-20" />
+                      </div>
+                    </div>
+
+                    <button className="w-full py-4 bg-gray-900 text-white rounded-2xl font-black text-sm uppercase tracking-widest shadow-xl shadow-gray-200 hover:scale-[1.02] transition-transform">
+                      Validar Selo
+                    </button>
                   </div>
                 </div>
               </div>
+
+              {/* Float labels */}
+              <motion.div
+                animate={{ y: [0, -10, 0] }}
+                transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
+                className="absolute -top-6 -right-6 bg-emerald-500 text-white px-4 py-2 rounded-xl font-bold text-sm shadow-lg z-20"
+              >
+                +24% Retorno
+              </motion.div>
+              <motion.div
+                animate={{ y: [0, 10, 0] }}
+                transition={{ duration: 4, repeat: Infinity, ease: "easeInOut", delay: 0.5 }}
+                className="absolute -bottom-6 -left-6 bg-white border border-gray-100 p-4 rounded-2xl shadow-xl z-20 flex items-center gap-3"
+              >
+                <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center text-blue-600">
+                  <Zap size={16} />
+                </div>
+                <span className="text-gray-900 font-bold text-sm whitespace-nowrap">Setup em 1 min</span>
+              </motion.div>
             </motion.div>
           </div>
         </section>

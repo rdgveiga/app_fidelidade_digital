@@ -35,7 +35,7 @@ router.post('/register', async (req, res) => {
       return;
     }
 
-    const passwordHash = bcrypt.hashSync(password, 10);
+    const passwordHash = await bcrypt.hash(password, 10);
 
     const { data: newUser, error: userError } = await db.from('users').insert({
       name,
@@ -89,20 +89,50 @@ router.post('/register', async (req, res) => {
 });
 
 router.post('/login', async (req, res) => {
-  try {
-    const { email, password } = req.body;
-    const { data: user } = await db.from('users').select('*').eq('email', email).single();
+  const { email, password } = req.body;
+  console.log(`[AUTH] Login attempt for: ${email}`);
 
-    if (!user || user.role === 'CLIENT' || !bcrypt.compareSync(password, user.password_hash)) {
+  try {
+    console.log('[AUTH] Fetching user from DB...');
+    const { data: user, error } = await db
+      .from('users')
+      .select('*')
+      .eq('email', email)
+      .single();
+
+    console.log('[AUTH] DB result:', user ? 'User found' : 'User not found', error ? `Error: ${error.message}` : '');
+
+    if (error || !user) {
+      console.log('[AUTH] Invalid credentials (user not found or error)');
       res.status(401).json({ error: 'Credenciais inválidas' });
       return;
     }
 
+    // Permitir login apenas para ADMIN e SHOPKEEPER no portal administrativo
+    // CLIENT deve usar o app mobile/cliente
+    if (user.role === 'CLIENT') {
+      console.log('[AUTH] Client role not allowed in admin portal');
+      res.status(401).json({ error: 'Acesso negado para clientes' });
+      return;
+    }
+
+    console.log('[AUTH] Comparing password hash...');
+    const isMatch = await bcrypt.compare(password, user.password_hash);
+    console.log('[AUTH] Password match:', isMatch);
+
+    if (!isMatch) {
+      console.log('[AUTH] Invalid credentials (password mismatch)');
+      res.status(401).json({ error: 'Credenciais inválidas' });
+      return;
+    }
+
+    console.log('[AUTH] Generating token...');
     const token = jwt.sign(
       { id: user.id, email: user.email, role: user.role },
-      JWT_SECRET,
+      JWT_SECRET as string,
       { expiresIn: '24h' }
     );
+    console.log('[AUTH] Login successful');
 
     let store = null;
     if (user.role === 'SHOPKEEPER') {
@@ -121,8 +151,9 @@ router.post('/login', async (req, res) => {
         store: store ? { slug: store.slug, name: store.name } : undefined
       }
     });
-  } catch (error) {
-    res.status(500).json({ error: 'Login failed' });
+  } catch (error: any) {
+    console.error('[AUTH] Crash no login:', error);
+    res.status(500).json({ error: 'Login failed: ' + (error?.message || 'unknown error') });
   }
 });
 

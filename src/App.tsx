@@ -20,6 +20,7 @@ import { Counter } from './pages/shop/Counter';
 import { Campaign } from './pages/shop/Campaign';
 import { Customers } from './pages/shop/Customers';
 import { Resources } from './pages/shop/Resources';
+import { Subscription } from './pages/shop/Subscription';
 import { AdminDashboard } from './pages/admin/Dashboard';
 import { AdminLogin } from './pages/admin/Login';
 
@@ -59,6 +60,7 @@ function App() {
             <Route path="/shop/:slug/campaign" element={<Campaign />} />
             <Route path="/shop/:slug/customers" element={<Customers />} />
             <Route path="/shop/:slug/resources" element={<Resources />} />
+            <Route path="/shop/:slug/subscription" element={<Subscription />} />
             {/* Redirect /shop to the user's specific slug dashboard if they hit it directly */}
             <Route path="/shop" element={<Navigate to={`/shop/${JSON.parse(localStorage.getItem('user') || '{}')?.store?.slug || 'dashboard'}/dashboard`} replace />} />
           </Route>
