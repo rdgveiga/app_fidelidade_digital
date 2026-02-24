@@ -8,7 +8,8 @@ interface User {
   role: 'CLIENT' | 'SHOPKEEPER' | 'ADMIN';
   mustChangePassword?: boolean;
   trialEndsAt?: string;
-  store?: { slug: string; name: string };
+  subscriptionTier?: 'basic' | 'start' | 'pro' | 'unlimited';
+  store?: { slug: string; name: string; logo_url?: string };
 }
 
 interface AuthContextType {
