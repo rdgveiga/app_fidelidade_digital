@@ -128,16 +128,16 @@ const ProfitCalculator = () => {
             </div>
           </div>
 
-          <div className="bg-white p-8 md:p-12 rounded-[2.5rem] shadow-2xl shadow-blue-900/40 text-center space-y-8 relative">
-            <div className="inline-block p-4 bg-emerald-100 text-emerald-600 rounded-2xl mb-4">
-              <Rocket size={32} className="animate-bounce" />
+          <div className="bg-white p-8 md:p-14 rounded-[3rem] shadow-2xl shadow-blue-900/30 text-center space-y-10 relative border border-blue-50">
+            <div className="inline-block p-5 bg-emerald-50 text-emerald-600 rounded-3xl mb-4 shadow-sm">
+              <Rocket size={36} className="animate-bounce" />
             </div>
-            <p className="text-gray-500 font-bold uppercase tracking-widest text-sm">Aumento Estimado de Lucro</p>
-            <div className="space-y-2">
-              <p className="text-6xl md:text-7xl font-black text-gray-900 leading-none">
+            <p className="text-gray-400 font-extrabold uppercase tracking-[0.2em] text-xs">Aumento Estimado de Lucro</p>
+            <div className="space-y-3">
+              <p className="text-6xl md:text-8xl font-black text-gray-900 leading-none tracking-tighter">
                 <span className="text-emerald-500">+</span> R$ {Math.round(increase).toLocaleString('pt-BR')}
               </p>
-              <p className="text-gray-400 font-medium">extras todos os meses</p>
+              <p className="text-gray-400 font-semibold text-lg italic">extras todos os meses</p>
             </div>
 
             <div className="pt-8 border-t border-gray-100">
@@ -214,9 +214,8 @@ export const Landing = () => {
                 Rápido e sem app
               </div>
 
-              <h1 className="text-5xl md:text-6xl lg:text-7xl font-black text-gray-900 leading-[1.1] tracking-tight max-w-[18ch]">
-                Aumente o faturamento da sua loja em até <span className="text-emerald-500">30%</span>, <br />
-                <span className="text-blue-600">fidelizando clientes</span>
+              <h1 className="text-5xl md:text-6xl lg:text-7xl font-black text-gray-900 leading-[1.1] tracking-tight max-w-[22ch]">
+                Aumente o faturamento da sua loja em até <span className="text-emerald-500 whitespace-nowrap">30%</span> fidelizando clientes
               </h1>
 
               <p className="text-xl text-gray-600 font-medium max-w-lg leading-relaxed">
@@ -252,23 +251,25 @@ export const Landing = () => {
             </motion.div>
 
             <motion.div
-              initial={{ opacity: 0, scale: 0.9 }}
+              initial={{ opacity: 0, scale: 0.95 }}
               whileInView={{ opacity: 1, scale: 1 }}
               viewport={{ once: true }}
-              className="relative"
+              className="relative group"
             >
-              <div className="bg-orange-100 rounded-[2.5rem] p-8 lg:p-12 shadow-2xl">
-                <div className="bg-white rounded-2xl shadow-xl overflow-hidden border-8 border-gray-800">
+              <div className="bg-gradient-to-br from-blue-100 to-indigo-50 rounded-[2.5rem] p-6 lg:p-10 shadow-2xl relative overflow-hidden">
+                <div className="absolute inset-0 bg-white/40 backdrop-blur-[2px]" />
+                <div className="relative bg-white rounded-2xl shadow-2xl overflow-hidden border-[1px] border-gray-100 transform transition-transform duration-700 group-hover:scale-[1.01]">
                   <img
                     src="https://picsum.photos/seed/fidelidade-digital/1200/800"
                     alt="Plataforma Fidelidade Digital"
-                    className="w-full h-auto"
+                    className="w-full h-auto aspect-video object-cover"
                     referrerPolicy="no-referrer"
                   />
+                  <div className="absolute inset-0 ring-1 ring-inset ring-black/5 rounded-2xl" />
                 </div>
               </div>
               {/* Decorative background glow */}
-              <div className="absolute -z-10 top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[120%] h-[120%] bg-blue-200/30 blur-[100px] rounded-full" />
+              <div className="absolute -z-10 top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[110%] h-[110%] bg-blue-100/40 blur-[120px] rounded-full" />
             </motion.div>
           </div>
         </section>
@@ -281,18 +282,27 @@ export const Landing = () => {
               <p className="text-lg text-gray-600">Se você tem clientes recorrentes, o Fidelidade Digital é para você.</p>
             </div>
 
-            <div className="grid grid-cols-2 lg:grid-cols-4 gap-6">
+            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
               {[
-                { icon: Rocket, label: "Lanchonetes e Cafés", color: "bg-orange-50 text-orange-600" },
-                { icon: Briefcase, label: "Salões e Barbearias", color: "bg-blue-50 text-blue-600" },
-                { icon: Heart, label: "Pet Shops e Clínicas", color: "bg-red-50 text-red-600" },
-                { icon: ShoppingBag, label: "Lojas e Varejo", color: "bg-purple-50 text-purple-600" },
-                { icon: Scale, label: "Profissionais Autônomos", color: "bg-teal-50 text-teal-600" },
+                { icon: Rocket, label: "Lanchonetes e Cafés", color: "from-orange-500" },
+                { icon: Briefcase, label: "Salões e Barbearias", color: "from-blue-500" },
+                { icon: Heart, label: "Pet Shops e Clínicas", color: "from-red-500" },
+                { icon: ShoppingBag, label: "Lojas e Varejo", color: "from-purple-500" },
+                { icon: Scale, label: "Profissionais Autônomos", color: "from-teal-500" },
               ].map((nicho, i) => (
-                <div key={i} className={`p-6 rounded-3xl ${nicho.color} flex flex-col items-center text-center gap-4 transition-transform hover:-translate-y-1`}>
-                  <nicho.icon size={32} />
-                  <span className="font-bold text-gray-900">{nicho.label}</span>
-                </div>
+                <motion.div
+                  key={i}
+                  whileHover={{ x: 8, transition: { duration: 0.2 } }}
+                  className="group relative bg-white p-6 rounded-[1.5rem] border border-gray-100 shadow-sm hover:shadow-xl hover:shadow-blue-900/5 transition-all duration-300 flex items-center gap-6 overflow-hidden"
+                >
+                  <div className={`absolute inset-0 bg-gradient-to-r ${nicho.color} to-white opacity-0 group-hover:opacity-[0.03] transition-opacity duration-300`} />
+                  <div className={`p-3 rounded-xl bg-gray-50 group-hover:scale-110 group-hover:bg-white transition-all duration-300 shrink-0`}>
+                    <nicho.icon size={28} className="text-gray-900 group-hover:text-blue-600 transition-colors" />
+                  </div>
+                  <span className="font-extrabold text-gray-900 text-lg leading-tight">
+                    {nicho.label}
+                  </span>
+                </motion.div>
               ))}
             </div>
           </div>
@@ -305,53 +315,51 @@ export const Landing = () => {
             <p className="text-xl text-gray-600">Esqueça os cartões de papel que os clientes perdem.</p>
           </div>
 
-          <div className="max-w-5xl mx-auto grid md:grid-cols-2 gap-8">
-            <div className="bg-gray-50 p-8 rounded-[2.5rem] border border-gray-100 transition-all duration-300 hover:shadow-xl hover:-translate-y-2">
-              <div className="flex items-center gap-3 mb-8">
-                <div className="w-10 h-10 bg-red-100 text-red-600 rounded-full flex items-center justify-center shrink-0">
-                  <X size={20} />
+          <div className="max-w-5xl mx-auto grid md:grid-cols-2 gap-8 items-stretch">
+            <div className="bg-white p-10 rounded-[2.5rem] border border-gray-100 transition-all duration-500 hover:border-red-100 hover:shadow-2xl hover:shadow-red-900/5 flex flex-col">
+              <div className="flex items-center gap-4 mb-8">
+                <div className="w-12 h-12 bg-red-50 text-red-500 rounded-2xl flex items-center justify-center shrink-0 shadow-inner">
+                  <X size={24} strokeWidth={3} />
                 </div>
-                <h3 className="text-xl font-bold text-gray-900">Cartões de Papel</h3>
+                <h3 className="text-2xl font-black text-gray-900">Cartões de Papel</h3>
               </div>
-              <ul className="space-y-4">
+              <ul className="space-y-5 flex-grow">
                 {[
                   "Clientes perdem ou esquecem em casa",
                   "Sem dados sobre quem são seus clientes",
                   "Custo recorrente com impressão",
                   "Fraudes são fáceis de cometer"
                 ].map((item, i) => (
-                  <li key={i} className="flex items-center gap-3 text-gray-600">
-                    <div className="w-5 h-5 bg-red-100 text-red-600 rounded-full flex items-center justify-center shrink-0">
-                      <div className="w-2 h-0.5 bg-current" />
-                    </div>
-                    {item}
+                  <li key={i} className="flex items-start gap-4 text-gray-500 group">
+                    <div className="mt-1 w-2 h-2 bg-red-200 rounded-full shrink-0 group-hover:bg-red-400 transition-colors" />
+                    <span className="text-lg font-medium tracking-tight leading-snug">{item}</span>
                   </li>
                 ))}
               </ul>
             </div>
-            <div className="bg-blue-50 p-8 rounded-[2.5rem] border border-blue-100 relative overflow-hidden transition-all duration-300 hover:shadow-xl hover:-translate-y-2">
-              <div className="absolute top-4 right-4 text-blue-100">
-                <ShieldCheck size={120} />
+            <div className="bg-blue-600 p-10 rounded-[3.5rem] border-4 border-blue-500 relative overflow-hidden transition-all duration-500 hover:shadow-2xl hover:shadow-blue-900/20 group flex flex-col">
+              <div className="absolute -top-12 -right-12 text-white/5 transition-transform duration-700 group-hover:scale-110 group-hover:-rotate-12">
+                <ShieldCheck size={280} />
               </div>
-              <div className="relative z-10">
-                <div className="flex items-center gap-3 mb-8">
-                  <div className="w-10 h-10 bg-blue-600 text-white rounded-full flex items-center justify-center shrink-0">
-                    <Check size={20} />
+              <div className="relative z-10 h-full flex flex-col">
+                <div className="flex items-center gap-4 mb-8">
+                  <div className="w-12 h-12 bg-white text-blue-600 rounded-2xl flex items-center justify-center shrink-0 shadow-lg">
+                    <Check size={24} strokeWidth={3} />
                   </div>
-                  <h3 className="text-xl font-bold text-gray-900">Fidelidade Digital</h3>
+                  <h3 className="text-2xl font-black text-white">Fidelidade Digital</h3>
                 </div>
-                <ul className="space-y-4">
+                <ul className="space-y-5 flex-grow">
                   {[
                     "Sempre no bolso do cliente (smartphone)",
                     "Você constrói sua lista de contatos automática",
                     "Zero custo de impressão e papel",
                     "Notificações para trazer o cliente de volta"
                   ].map((item, i) => (
-                    <li key={i} className="flex items-center gap-3 text-gray-900 font-bold">
-                      <div className="w-5 h-5 bg-blue-600 text-white rounded-full flex items-center justify-center shrink-0">
-                        <Check size={14} />
+                    <li key={i} className="flex items-start gap-4 text-white">
+                      <div className="mt-1.5 w-5 h-5 bg-white/20 text-white rounded-full flex items-center justify-center shrink-0 border border-white/30 group-hover:bg-emerald-400 group-hover:border-emerald-300 transition-colors">
+                        <Check size={12} strokeWidth={4} />
                       </div>
-                      {item}
+                      <span className="text-lg font-bold tracking-tight leading-snug">{item}</span>
                     </li>
                   ))}
                 </ul>
@@ -392,13 +400,13 @@ export const Landing = () => {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: i * 0.1 }}
-                className="bg-white p-10 rounded-[2.5rem] shadow-sm border border-gray-100"
+                className="bg-white p-12 rounded-[3.5rem] shadow-xl shadow-gray-200/50 border border-gray-100 hover:border-blue-100 transition-all duration-300 group"
               >
-                <div className="w-14 h-14 bg-blue-50 text-blue-600 rounded-2xl flex items-center justify-center mb-6">
-                  <item.icon size={28} />
+                <div className="w-16 h-16 bg-blue-50 text-blue-600 rounded-2xl flex items-center justify-center mb-10 group-hover:scale-110 group-hover:bg-blue-600 group-hover:text-white transition-all duration-300 shadow-inner">
+                  <item.icon size={32} />
                 </div>
-                <h3 className="text-xl font-bold text-gray-900 mb-4">{item.step}</h3>
-                <p className="text-gray-600 leading-relaxed">{item.desc}</p>
+                <h3 className="text-2xl font-black text-gray-900 mb-6 leading-tight">{item.step}</h3>
+                <p className="text-gray-500 leading-relaxed font-medium text-lg">{item.desc}</p>
               </motion.div>
             ))}
           </div>
@@ -636,12 +644,12 @@ export const Landing = () => {
                   className={`relative bg-white p-10 rounded-[3rem] shadow-xl border-2 flex flex-col transition-all duration-300 hover:shadow-2xl hover:-translate-y-2 ${plan.highlight ? 'border-blue-600 scale-105 z-10' : 'border-transparent hover:border-blue-100'}`}
                 >
                   {plan.highlight && (
-                    <div className="absolute -top-4 left-1/2 -translate-x-1/2 bg-blue-600 text-white px-4 py-1 rounded-full text-xs font-black uppercase tracking-widest">
+                    <div className="absolute -top-5 left-1/2 -translate-x-1/2 bg-gradient-to-r from-blue-600 to-indigo-600 text-white px-6 py-1.5 rounded-full text-xs font-black uppercase tracking-[0.2em] shadow-lg shadow-blue-500/30 whitespace-nowrap">
                       Mais Popular
                     </div>
                   )}
-                  <div className={`w-16 h-16 rounded-2xl flex items-center justify-center mb-8 ${plan.highlight ? 'bg-blue-50 text-blue-600' : 'bg-gray-100 text-gray-500'}`}>
-                    <plan.icon size={32} />
+                  <div className={`w-20 h-20 rounded-3xl flex items-center justify-center mb-10 shadow-inner ${plan.highlight ? 'bg-blue-50 text-blue-600' : 'bg-gray-50 text-gray-400'}`}>
+                    <plan.icon size={40} strokeWidth={1.5} />
                   </div>
                   <h3 className="text-2xl font-black text-gray-900 mb-2">{plan.name}</h3>
                   <div className="flex items-baseline gap-1 mb-8">
@@ -771,9 +779,10 @@ export const Landing = () => {
                   a: "O sistema gera notificações automáticas que podem ser enviadas para o cliente, mantendo-o engajado com sua marca."
                 }
               ].map((item, i) => (
-                <div key={i} className="p-8 bg-gray-50 rounded-[2rem] border border-gray-100">
-                  <h3 className="text-xl font-bold text-gray-900 mb-4">{item.q}</h3>
-                  <p className="text-gray-600 leading-relaxed">{item.a}</p>
+                <div key={i} className="p-10 bg-white rounded-[2.5rem] border border-gray-100 shadow-sm transition-all duration-300 hover:shadow-xl hover:shadow-blue-900/5 group">
+                  <h3 className="text-2xl font-black text-gray-900 mb-5 group-hover:text-blue-600 transition-colors uppercase tracking-tight">{item.q}</h3>
+                  <div className="w-12 h-1 bg-blue-100 mb-6 group-hover:w-20 transition-all duration-500" />
+                  <p className="text-gray-500 leading-relaxed font-medium text-lg">{item.a}</p>
                 </div>
               ))}
             </div>
