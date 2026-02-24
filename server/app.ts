@@ -1,11 +1,11 @@
 import express, { Request, Response, NextFunction } from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
-import { initDb } from './db';
-import authRoutes from './routes/auth';
-import shopRoutes from './routes/shop';
-import clientRoutes from './routes/client';
-import adminRoutes from './routes/admin';
+import { initDb } from './db.js';
+import authRoutes from './routes/auth.js';
+import shopRoutes from './routes/shop.js';
+import clientRoutes from './routes/client.js';
+import adminRoutes from './routes/admin.js';
 
 dotenv.config();
 
