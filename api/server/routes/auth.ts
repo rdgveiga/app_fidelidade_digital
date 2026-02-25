@@ -24,7 +24,8 @@ const registerSchema = z.object({
 
 router.post('/register', async (req, res) => {
   try {
-    const { name, email, password, role, storeName, cnpj, cep, whatsapp } = registerSchema.parse(req.body);
+    const normalizedBody = { ...req.body, email: req.body.email?.toLowerCase() };
+    const { name, email, password, role, storeName, cnpj, cep, whatsapp } = registerSchema.parse(normalizedBody);
 
     console.log(`[AUTH] Tentativa de registro: ${email}`);
 
@@ -89,7 +90,8 @@ router.post('/register', async (req, res) => {
 });
 
 router.post('/login', async (req, res) => {
-  const { email, password } = req.body;
+  const { password } = req.body;
+  const email = req.body.email?.toLowerCase();
   console.log(`[AUTH] Login attempt for: ${email}`);
 
   try {

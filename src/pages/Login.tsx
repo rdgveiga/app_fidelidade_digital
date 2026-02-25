@@ -32,8 +32,8 @@ export const Login = () => {
     try {
       const endpoint = isRegister ? '/api/auth/register' : '/api/auth/login';
       const body = isRegister
-        ? { ...formData, role: 'SHOPKEEPER' }
-        : { email: formData.email, password: formData.password };
+        ? { ...formData, email: formData.email.toLowerCase(), role: 'SHOPKEEPER' }
+        : { email: formData.email.toLowerCase(), password: formData.password };
 
       const res = await fetch(endpoint, {
         method: 'POST',
