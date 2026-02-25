@@ -1,65 +1,60 @@
 import dotenv from 'dotenv';
 dotenv.config();
 
+console.log('[DEV-SERVER] Variáveis de ambiente carregadas.');
+
 import express, { Request, Response, NextFunction } from 'express';
 import cors from 'cors';
 import { createServer as createViteServer } from 'vite';
-import { initDb } from './db.js';
-import authRoutes from './routes/auth.js';
-import shopRoutes from './routes/shop.js';
-import clientRoutes from './routes/client.js';
-import adminRoutes from './routes/admin.js';
 
 const PORT = Number(process.env.PORT) || 3000;
 
 async function start() {
-    const app = express();
+    console.log('[DEV-SERVER] Iniciando função start...');
+    try {
+        // Import routes dynamically so dotenv.config() has run
+        console.log('[DEV-SERVER] Carregando módulos internos...');
+        const { initDb } = await import('./db.js');
+        const authRoutes = (await import('./routes/auth.js')).default;
+        const shopRoutes = (await import('./routes/shop.js')).default;
+        const clientRoutes = (await import('./routes/client.js')).default;
+        const adminRoutes = (await import('./routes/admin.js')).default;
 
-    // Vite dev server in middleware mode (handles frontend + HMR)
-    const vite = await createViteServer({
-        server: { middlewareMode: true },
-        appType: 'spa',
-    });
+        const app = express();
 
-    // Request logger
-    app.use((req, res, next) => {
-        console.log(`[DEV-SERVER] ${req.method} ${req.url}`);
-        next();
-    });
+        console.log('[DEV-SERVER] Criando servidor Vite...');
+        const vite = await createViteServer({
+            server: { middlewareMode: true },
+            appType: 'spa',
+        });
 
-    // Standard middleware
-    app.use(cors());
-    app.use(express.json());
+        app.use(cors());
+        app.use(express.json());
 
-    // Init DB
-    initDb();
+        // Init DB
+        console.log('[DEV-SERVER] Inicializando banco de dados...');
+        await initDb();
 
-    // API routes (must come BEFORE Vite so /api/* isn't intercepted by frontend)
-    app.use('/api/auth', authRoutes);
-    app.use('/api/shop', shopRoutes);
-    app.use('/api/client', clientRoutes);
-    app.use('/api/admin', adminRoutes);
-    app.get('/api/health', (_req, res) => {
-        console.log('[DEV-SERVER] Health check hit');
-        res.json({ status: 'ok', ts: new Date().toISOString(), env: process.env.NODE_ENV || 'development' });
-    });
+        // API routes
+        app.use('/api/auth', authRoutes);
+        app.use('/api/shop', shopRoutes);
+        app.use('/api/client', clientRoutes);
+        app.use('/api/admin', adminRoutes);
+        app.get('/api/health', (_req, res) => {
+            res.json({ status: 'ok', ts: new Date().toISOString() });
+        });
 
-    // Error handler for API routes
-    app.use('/api', (err: any, _req: Request, res: Response, _next: NextFunction) => {
-        console.error('API ERROR:', err);
-        res.status(err.status || 500).json({ error: err.message || 'Something went wrong' });
-    });
+        // Vite handles everything else
+        app.use(vite.middlewares);
 
-    // Vite handles everything else (React SPA + HMR)
-    app.use(vite.middlewares);
-
-    app.listen(PORT, '0.0.0.0', () => {
-        console.log(`\n🚀  App running at http://localhost:${PORT}`);
-        console.log(`📡  API: http://localhost:${PORT}/api/health\n`);
-    });
+        app.listen(PORT, '0.0.0.0', () => {
+            console.log(`\n🚀  App running at http://localhost:${PORT}`);
+            console.log(`📡  API: http://localhost:${PORT}/api/health\n`);
+        });
+    } catch (error) {
+        console.error('[DEV-SERVER] Erro crítico na inicialização:', error);
+        process.exit(1);
+    }
 }
 
-start().catch((err) => {
-    console.error('Failed to start server:', err);
-    process.exit(1);
-});
+start();

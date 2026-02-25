@@ -3,6 +3,8 @@ import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import db from '../db.js';
 import { z } from 'zod';
+import crypto from 'crypto';
+import { sendPasswordResetEmail } from '../utils/email.js';
 
 const router = express.Router();
 const JWT_SECRET = process.env.JWT_SECRET;
@@ -218,6 +220,95 @@ router.post('/client/change-password', async (req, res) => {
     res.json({ message: 'Senha alterada com sucesso' });
   } catch (error) {
     res.status(401).json({ error: 'Invalid token' });
+  }
+});
+
+// FORGOT PASSWORD
+router.post('/forgot-password', async (req, res) => {
+  try {
+    const { email } = z.object({ email: z.string().email() }).parse(req.body);
+    const normalizedEmail = email.toLowerCase();
+
+    // Use Supabase Auth to send the reset email
+    // This will send an email with a link that Supabase handles
+    const { error } = await db.auth.resetPasswordForEmail(normalizedEmail, {
+      redirectTo: `${process.env.FRONTEND_URL || 'http://localhost:3000'}/reset-password`,
+    });
+
+    if (error) {
+      console.error('[AUTH] Supabase Auth error:', error);
+      // Still return success to prevent email enumeration
+    }
+
+    res.json({ message: 'Se o e-mail estiver cadastrado, você receberá instruções em breve.' });
+  } catch (error: any) {
+    console.error('[AUTH] Erro no forgot-password:', error);
+    res.status(400).json({ error: error.message || 'Erro ao processar solicitação' });
+  }
+});
+
+// RESET PASSWORD
+router.post('/reset-password', async (req, res) => {
+  try {
+    const { token, newPassword } = z.object({
+      token: z.string().nullable().optional(),
+      newPassword: z.string().min(6)
+    }).parse(req.body);
+
+    const passwordHash = await bcrypt.hash(newPassword, 10);
+    let userId: string | null = null;
+    let codeId: string | null = null;
+
+    // SCENARIO 1: Supabase Auth Session (via standard forgot password link)
+    // Check if the request has a valid Supabase Auth session
+    const authHeader = req.headers.authorization;
+    if (authHeader) {
+      const { data: { user: authUser }, error: authError } = await db.auth.getUser(authHeader.split(' ')[1]);
+      if (authUser && !authError) {
+        // Find our custom user record by email
+        const { data: userRecord } = await db.from('users').select('id').eq('email', authUser.email?.toLowerCase()).single();
+        if (userRecord) {
+          userId = userRecord.id;
+        }
+      }
+    }
+
+    // SCENARIO 2: Legacy Token-based (fallback or direct tool use)
+    if (!userId && token) {
+      const { data: codeData, error: codeError } = await db.from('temporary_codes')
+        .select('*')
+        .eq('code_hash', token)
+        .eq('type', 'password_reset')
+        .eq('used', false)
+        .gt('expires_at', new Date().toISOString())
+        .single();
+
+      if (codeData && !codeError) {
+        userId = codeData.user_id;
+        codeId = codeData.id;
+      }
+    }
+
+    if (!userId) {
+      return res.status(400).json({ error: 'Sessão expirada ou link inválido. Solicite uma nova recuperação.' });
+    }
+
+    // Update password in our system
+    const { error: updateError } = await db.from('users')
+      .update({ password_hash: passwordHash })
+      .eq('id', userId);
+
+    if (updateError) throw updateError;
+
+    // Mark token as used if it was a token-based flow
+    if (codeId) {
+      await db.from('temporary_codes').update({ used: true }).eq('id', codeId);
+    }
+
+    res.json({ message: 'Senha atualizada com sucesso!' });
+  } catch (error: any) {
+    console.error('[AUTH] Erro no reset-password:', error);
+    res.status(400).json({ error: error.message || 'Erro ao redefinir senha' });
   }
 });
 

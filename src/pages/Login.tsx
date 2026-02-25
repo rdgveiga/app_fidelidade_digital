@@ -250,6 +250,16 @@ export const Login = () => {
                   onChange={e => setFormData({ ...formData, password: e.target.value })}
                 />
               </div>
+              {!isRegister && (
+                <div className="flex justify-end mt-1">
+                  <Link
+                    to="/forgot-password"
+                    className="text-sm font-bold text-blue-600 hover:underline"
+                  >
+                    Esqueceu a senha?
+                  </Link>
+                </div>
+              )}
             </div>
 
             <button
